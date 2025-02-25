@@ -64,7 +64,7 @@ sudo apt install leafpad
 
 Example installation output:
 
-![Leafpad Installation](./leafpad_installation.png)
+![Leafpad Installation](./Task1/leafpad_installation.png)
 
 ## 2. Navigate to the Home Directory
 
@@ -104,7 +104,7 @@ int main() {
 - The program returns `0` to indicate successful execution.
 
 Example editor window:
-![Leafpad Editor](./leafpad_editor.png)
+![Leafpad Editor](./Task1/leafpad_editor.png)
 
 ## 4. Compile the C Code
 
@@ -132,4 +132,5 @@ Sum of numbers from 1 to 5 is 15
 ```
 
 Example output:
-![Program Output](./sum1ton_output.png)
+
+![Program Output](./Task1/sum1ton_output.png)
