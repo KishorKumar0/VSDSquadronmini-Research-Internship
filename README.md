@@ -52,33 +52,84 @@ To set up Ubuntu on VirtualBox, follow the steps below:
 
 ## Part 2: Writing and Evaluating C Code Along with RISC-V Assembly Code
 
-In this section, we will write, compile, and evaluate a simple C program. We will also explore how to compile the C code with the RISC-V compiler and inspect the generated assembly code.
+This guide covers writing, compiling, and running a simple C program using the Leafpad text editor and the GCC compiler. Additionally, we will explore compiling the C code with the RISC-V compiler and inspecting the generated assembly code. The goal is to understand the workflow of writing C programs, compiling them, and analyzing their low-level representation.
 
-### 1. Compile and Run the C Code
+## 1. Install Leafpad Text Editor
 
-To start, we will write and run a simple C program using the **leafpad** text editor. Follow the steps below to accomplish this.
+Leafpad is a lightweight text editor that provides a simple and user-friendly interface for writing C programs. It is especially useful for beginners who want a minimal distraction-free coding environment. Install it using:
 
-#### Steps:
-1. **Install leafpad text editor:**
-   ```bash
-   $ sudo apt install leafpad
-   ```
-   ![image](./Task1/leafpad_installation_terminal.png)
-2. **Navigate to the Home Directory:**
-   ```
-   $ cd
-   ```
-3. **Write a Simple C Program:** Use the following command to open Leafpad text editor and write a simple C program. Replace `filename.c` with your desired filename:
-   ```
-   $ leafpad filename.c &
-   ```
-   ![image](./Task1/leafpad_editor.png)
-4. **Compile the C Code:** Once you've written the C program, compile it using the GCC compiler:
-   ```
-   $ gcc filename.c
-   ```
-5. **Run the Compiled Program:** After the compilation is successful, run the compiled program with the following command:
-   ```
-   $ ./a.out
-   ```
-   ![image](./Task1/sum1ton_output.png)
+```sh
+sudo apt install leafpad
+```
+
+Example installation output:
+
+![Leafpad Installation](./leafpad_installation.png)
+
+## 2. Navigate to the Home Directory
+
+Before creating or editing files, ensure you are in the home directory. This makes file management easier and keeps your workspace organized.
+
+```sh
+cd ~
+```
+
+## 3. Write a Simple C Program
+
+Use the following command to open Leafpad and create a C program file:
+
+```sh
+leafpad sum1ton.c &
+```
+
+Example C program (`sum1ton.c`):
+
+```c
+#include <stdio.h>
+
+int main() {
+    int i, sum = 0, n = 5;
+    for (i = 1; i <= n; ++i) {
+        sum += i;
+    }
+    printf("Sum of numbers from 1 to %d is %d\n", n, sum);
+    return 0;
+}
+```
+
+### Explanation of the Code
+- We declare three integer variables: `i`, `sum`, and `n` (set to 5).
+- We use a `for` loop to iterate from `1` to `n`, adding each number to `sum`.
+- The final sum is printed using `printf`.
+- The program returns `0` to indicate successful execution.
+
+Example editor window:
+![Leafpad Editor](./leafpad_editor.png)
+
+## 4. Compile the C Code
+
+After writing the program, we need to compile it using GCC (GNU Compiler Collection). Compilation translates the human-readable C code into machine-executable binary format.
+
+```sh
+gcc sum1ton.c
+```
+
+If there are no errors, this command generates an executable file named `a.out` by default.
+
+## 5. Run the Compiled Program
+
+To execute the compiled program, run the following command:
+
+```sh
+./a.out
+```
+
+### Expected Output
+If the compilation is successful, running the program should produce:
+
+```sh
+Sum of numbers from 1 to 5 is 15
+```
+
+Example output:
+![Program Output](./sum1ton_output.png)
