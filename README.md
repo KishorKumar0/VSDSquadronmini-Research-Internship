@@ -104,6 +104,7 @@ int main() {
 - The program returns `0` to indicate successful execution.
 
 Example editor window:
+
 ![Leafpad Editor](./Task1/leafpad_editor.png)
 
 ## 4. Compile the C Code
