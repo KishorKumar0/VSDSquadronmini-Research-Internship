@@ -165,5 +165,143 @@ This helps catch potential issues in your code, such as unused variables or inco
 
 To modify the summation range, change the value of `n` in the program and recompile it. This allows you to experiment with different inputs and understand how loops work in C.
 
+Here’s a detailed and well-structured GitHub README file for compiling C code using the RISC-V compiler. It includes in-depth explanations of each step, key commands, and optimization options.
 
 
+### **Compiling C Code with RISC-V Compiler**  
+
+This guide explains how to compile C programs using the **RISC-V GCC Compiler**, examine the generated assembly code, and optimize the compilation process.  
+
+
+***Introduction to RISC-V Compilation***
+
+RISC-V is an open-source Instruction Set Architecture (ISA) that is widely used for embedded systems, computer architecture research, and hardware development. To run C programs on a RISC-V architecture, we need to compile them using a specialized **RISC-V GCC toolchain**.
+
+This guide walks through:
+1. **Compiling C code with the RISC-V GCC compiler**
+2. **Inspecting the generated assembly code**
+3. **Understanding different optimization levels**
+4. **Interpreting key RISC-V compiler flags**
+
+
+***Prerequisites***
+
+Before compiling your code, ensure you have the **RISC-V GNU toolchain** installed. You can verify the installation using:
+
+```sh
+riscv64-unknown-elf-gcc --version
+```
+
+If not installed, you can set it up using:
+```sh
+sudo apt install gcc-riscv64-unknown-elf
+```
+
+#### **1. Compiling C Code Using the RISC-V Compiler**
+To compile a C file with the **RISC-V GCC compiler**, run the following command:  
+
+```sh
+riscv64-unknown-elf-gcc -O1 -mabi=lp64 -march=rv64i -o filename.o filename.c
+```
+ ![image](./Task1/riscv_compiler.png)
+
+### **Explanation of Command Options**
+| **Option**              | **Description** |
+|-------------------------|----------------|
+| `-O1`                 | Optimization level 1 (balances compilation time and performance) |
+| `-mabi=lp64`          | Specifies the **LP64 ABI** (64-bit long, pointer, integer) |
+| `-march=rv64i`        | Specifies the **RISC-V 64-bit Integer** instruction set |
+| `-o filename.o`       | Outputs the compiled object file |
+
+Replace **filename.c** with your actual C source file.
+
+
+
+#### **2. Listing the Compiled Object File**
+Once compiled, verify the creation of the **object file**:
+
+```sh
+ls -ltr filename.o
+```
+
+If the compilation was successful, you should see the object file (`filename.o`) listed.
+
+#### **3. Displaying the Assembly Code**
+To view the **assembly language output** of your C code, use the following command:
+
+```sh
+riscv64-unknown-elf-objdump -d filename.o
+```
+ ![image](./Task1/assembly_code.png)
+ 
+This will **disassemble** the compiled object file and show the **low-level assembly instructions** generated from your C code.
+
+#### **4. Viewing Optimized Assembly Code**
+To inspect the assembly output more conveniently, you can **pipe** it through `less`:
+
+```sh
+riscv64-unknown-elf-objdump -d filename.o | less
+```
+ ![image](./Task1/optimized_assembly.png)
+ 
+***Navigation Tips:***
+- Press **"/main"** to search for the `main` function.  
+- Use **arrow keys** or **Page Up/Down** to scroll through the output.  
+- Press **q** to exit.
+
+ ![image](./Task1/main_instructions.png)
+ 
+#### **5. Using a Higher Optimization Level (-Ofast)**
+For **maximum performance optimization**, you can use the `-Ofast` flag:
+
+```sh
+riscv64-unknown-elf-gcc -Ofast -mabi=lp64 -march=rv64i -o sum1ton.o sum1ton.c
+```
+ ![image](./Task1/main_instructions2.png)
+ 
+***Breakdown of Compiler Flags***
+| **Option**              | **Description** |
+|-------------------------|----------------|
+| `-Ofast`              | Aggressive optimizations for **maximum speed** |
+| `-mabi=lp64`          | Uses LP64 ABI (64-bit architecture) |
+| `-march=rv64i`        | Compiles for the **64-bit RISC-V** architecture |
+| `sum1ton.o`           | Output object file |
+| `sum1ton.c`           | Input C source file |
+
+***Why Use -Ofast?*** 
+- Enables all optimizations of `-O3` plus aggressive floating-point optimizations.
+- Ignores strict compliance with IEEE floating-point standards (faster but less precise).
+
+**Note:** Use `-Ofast` only if speed is critical, as it may lead to unexpected behavior in some cases.
+
+#### **6. Optimization Levels in RISC-V GCC**
+The RISC-V GCC compiler supports various optimization levels:
+
+| **Optimization Level** | **Description** |
+|-------------------------|----------------|
+| `-O0`                 | No optimization (default). Fast compilation but **slow execution**. |
+| `-O1`                 | Basic optimizations, balances **speed and compilation time**. |
+| `-O2`                 | More aggressive optimizations than `-O1`, improves performance. |
+| `-O3`                 | Maximizes optimization, **more aggressive loop and memory optimizations**. |
+| `-Os`                 | Optimizes code size instead of speed. |
+| `-Ofast`              | Maximum performance optimizations, ignoring strict IEEE standards. |
+
+***When to Use Different Levels?***
+- Use `-O0` when debugging.
+- Use `-O2` for **general-purpose** applications.
+- Use `-O3` for **compute-heavy** applications.
+- Use `-Ofast` for **speed-critical** programs.
+
+#### **7. Understanding RISC-V Compilation Terms**
+***RISC-V ABI (`-mabi=lp64`)***
+The **Application Binary Interface (ABI)** defines **how functions interact** in compiled code.  
+- **LP64**: 64-bit `long`, pointer, and integer types.  
+- Required for **64-bit** RISC-V programs.
+
+***RISC-V Architecture (`-march=rv64i`)***
+- `rv64i`: The **64-bit integer** base instruction set for RISC-V.
+- Ensures compatibility with **RISC-V 64-bit processors**.
+
+***RISCV-OBJDUMP (`riscv64-unknown-elf-objdump -d`)***
+- Used to **disassemble** object files into **assembly code**.
+- Helps **debug and analyze** the generated machine instructions.
