@@ -50,40 +50,44 @@ To set up Ubuntu on VirtualBox, follow the steps below:
 7. Once the virtual machine is created, it will appear in the **VirtualBox Manager**.
 8. Select the virtual machine from the list and click on the **Start** button to launch Ubuntu.
 
-## Part 2: Writing and Evaluating C Code Along with RISC-V Assembly Code
+## Part 2: Writing and Evaluating C Code with GCC Compiler
 
-This guide covers writing, compiling, and running a simple C program using the Leafpad text editor and the GCC compiler. Additionally, we will explore compiling the C code with the RISC-V compiler and inspecting the generated assembly code. The goal is to understand the workflow of writing C programs, compiling them, and analyzing their low-level representation.
+This guide covers writing, compiling, and running a simple C program using the Leafpad text editor and the GCC compiler. It is designed to help beginners get started with C programming in a straightforward and structured manner.
 
 ## 1. Install Leafpad Text Editor
+Leafpad is a lightweight text editor with a simple and user-friendly interface, making it ideal for beginners. It provides a distraction-free environment for writing code without unnecessary complexity.
 
-Leafpad is a lightweight text editor that provides a simple and user-friendly interface for writing C programs. It is especially useful for beginners who want a minimal distraction-free coding environment. Install it using:
+To install Leafpad, use the following command:
 
 ```sh
 sudo apt install leafpad
 ```
+![image](./Task1/hardware.png)
 
-Example installation output:
-
-![Leafpad Installation](./Task1/leafpad_installation.png)
+This will download and install Leafpad on your system, allowing you to use it for writing and editing your C programs.
 
 ## 2. Navigate to the Home Directory
+Before creating or editing files, ensure you are in the home directory. Organizing your files in a dedicated workspace prevents confusion and makes file management more efficient.
 
-Before creating or editing files, ensure you are in the home directory. This makes file management easier and keeps your workspace organized.
+Use the following command to navigate to the home directory:
 
 ```sh
 cd ~
 ```
 
-## 3. Write a Simple C Program
+This ensures that the C program file is stored in an easily accessible location.
 
-Use the following command to open Leafpad and create a C program file:
+## 3. Write a Simple C Program
+To write your C program, open Leafpad and create a new file named `sum1ton.c` using the command:
 
 ```sh
 leafpad sum1ton.c &
 ```
+![image](./Task1/hardware.png)
 
-Example C program (`sum1ton.c`):
+The ampersand (`&`) allows Leafpad to run in the background, so you can continue using the terminal.
 
+### Example C Program (sum1ton.c):
 ```c
 #include <stdio.h>
 
@@ -97,41 +101,66 @@ int main() {
 }
 ```
 
-### Explanation of the Code
-- We declare three integer variables: `i`, `sum`, and `n` (set to 5).
-- We use a `for` loop to iterate from `1` to `n`, adding each number to `sum`.
-- The final sum is printed using `printf`.
-- The program returns `0` to indicate successful execution.
-
-Example editor window:
-
-![Leafpad Editor](./Task1/leafpad_editor.png)
+### Explanation of the Code:
+1. **Header File Inclusion**: `#include <stdio.h>` imports the Standard Input and Output library, which is necessary for using the `printf` function.
+2. **Variable Declaration**: Three integer variables are declared:
+   - `i` is used as the loop counter.
+   - `sum` stores the cumulative sum of numbers.
+   - `n` represents the upper limit of the summation (set to 5).
+3. **For Loop**:
+   - The loop runs from `1` to `n`.
+   - Each iteration adds the value of `i` to `sum`.
+4. **Output Statement**:
+   - The `printf` function prints the calculated sum.
+5. **Return Statement**:
+   - The `return 0;` statement indicates that the program has executed successfully.
 
 ## 4. Compile the C Code
+Before running the program, we must compile it using GCC. Compilation translates human-readable C code into a machine-executable binary format.
 
-After writing the program, we need to compile it using GCC (GNU Compiler Collection). Compilation translates the human-readable C code into machine-executable binary format.
+Use the following command to compile the code:
 
 ```sh
-gcc sum1ton.c
+gcc sum1ton.c -o sum1ton
 ```
 
-If there are no errors, this command generates an executable file named `a.out` by default.
+### Explanation of Compilation:
+- `gcc` is the GNU Compiler Collection, used to compile C programs.
+- `sum1ton.c` is the source code file.
+- `-o sum1ton` specifies the output file name (`sum1ton`). Without this option, GCC generates a default executable named `a.out`.
+- If there are syntax errors in your code, the compiler will display error messages to help you debug them.
 
 ## 5. Run the Compiled Program
-
-To execute the compiled program, run the following command:
+Once the program is compiled successfully, you can execute it by running:
 
 ```sh
 ./a.out
 ```
+![image](./Task1/hardware.png)
 
-### Expected Output
-If the compilation is successful, running the program should produce:
-
+### Expected Output:
 ```sh
 Sum of numbers from 1 to 5 is 15
 ```
 
-Example output:
+This confirms that the program correctly calculates the sum of numbers from `1` to `5`.
 
-![Program Output](./Task1/sum1ton_output.png)
+## 6. Additional Notes
+### Installing GCC
+If GCC is not installed on your system, you can install it using:
+```sh
+sudo apt install gcc
+```
+
+### Enabling Warnings
+To compile the program with warnings enabled, use:
+```sh
+gcc -Wall sum1ton.c -o sum1ton
+```
+This helps catch potential issues in your code, such as unused variables or incorrect format specifiers.
+
+### Running the Program with Different Values
+To modify the summation range, change the value of `n` in the program and recompile it. This allows you to experiment with different inputs and understand how loops work in C.
+
+
+
