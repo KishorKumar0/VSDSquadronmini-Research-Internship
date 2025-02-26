@@ -9,7 +9,7 @@ This guide will walk you through the process of setting up the necessary environ
 #### 1. Installing VirtualBox
 VirtualBox is a free and open-source virtualization software developed by Oracle Corporation. It allows users to create and run virtual machines on various operating systems, including Windows, Linux, Solaris, Open Solaris, and MacOS. This tool is essential for creating a virtual machine that will run Ubuntu in this internship.
 
-**Features of VirtualBox:**
+***Features of VirtualBox:***
 - Hypervisor for x86 architecture.
 - Virtualizes different operating systems.
 - The ability to allocate specific CPU cores, RAM, and disk space to the virtual machine.
@@ -21,11 +21,11 @@ To download and install VirtualBox, you can refer to the following links:
 #### 2. Creating a New Ubuntu Virtual Machine in VirtualBox
 To set up Ubuntu on VirtualBox, follow the steps below:
 
-**Prerequisites:**
+***Prerequisites:***
 - Ensure that your **C:** or **D:** drive has at least **100GB** of free space.
 - Download the Ubuntu Virtual Disk Image file from [riscv workshop.vdi](https://forgefunder.com/~kunal/riscv_workshop.vdi).
 
-**Steps to Set Up the Ubuntu Virtual Machine:**
+***Steps to Set Up the Ubuntu Virtual Machine:***
 1. Launch **VirtualBox**.
 2. Click on the **"New"** button to create a new virtual machine.
 3. Fill in the details as follows:
@@ -87,7 +87,7 @@ To write your C program, open Leafpad and create a new file named `sum1ton.c` us
 
 The ampersand (`&`) allows Leafpad to run in the background, so you can continue using the terminal.
 
-**Example C Program (sum1ton.c):**
+***Example C Program (sum1ton.c):***
    ```c
    #include <stdio.h>
 
@@ -101,7 +101,7 @@ The ampersand (`&`) allows Leafpad to run in the background, so you can continue
    }
    ```
 
-**Explanation of the Code:**
+***Explanation of the Code:***
 1. **Header File Inclusion**: `#include <stdio.h>` imports the Standard Input and Output library, which is necessary for using the `printf` function.
 2. **Variable Declaration**: Three integer variables are declared:
    - `i` is used as the loop counter.
@@ -124,7 +124,7 @@ Use the following command to compile the code:
    gcc sum1ton.c -o sum1ton
    ```
 
-**Explanation of Compilation:**
+***Explanation of Compilation:***
 - `gcc` is the GNU Compiler Collection, used to compile C programs.
 - `sum1ton.c` is the source code file.
 - `-o sum1ton` specifies the output file name (`sum1ton`). Without this option, GCC generates a default executable named `a.out`.
@@ -138,7 +138,7 @@ Once the program is compiled successfully, you can execute it by running:
    ```
    ![image](./Task1/hardware.png)
 
-**Expected Output:**
+***Expected Output:***
    ```sh
    Sum of numbers from 1 to 5 is 15
    ```
@@ -146,14 +146,14 @@ Once the program is compiled successfully, you can execute it by running:
 This confirms that the program correctly calculates the sum of numbers from `1` to `5`.
 
 #### 6. Additional Notes
-**Installing GCC**
+***Installing GCC***
 
 If GCC is not installed on your system, you can install it using:
    ```sh
    sudo apt install gcc
    ```
 
-**Enabling Warnings**
+***Enabling Warnings***
 
 To compile the program with warnings enabled, use:
    ```sh
@@ -161,7 +161,7 @@ To compile the program with warnings enabled, use:
    ```
 This helps catch potential issues in your code, such as unused variables or incorrect format specifiers.
 
-**Running the Program with Different Values**
+***Running the Program with Different Values***
 
 To modify the summation range, change the value of `n` in the program and recompile it. This allows you to experiment with different inputs and understand how loops work in C.
 
