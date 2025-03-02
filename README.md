@@ -305,3 +305,137 @@ The **Application Binary Interface (ABI)** defines **how functions interact** in
 ***RISCV-OBJDUMP (`riscv64-unknown-elf-objdump -d`)***
 - Used to **disassemble** object files into **assembly code**.
 - Helps **debug and analyze** the generated machine instructions.
+
+---
+## TASK 2: Running and Debugging sum_1ton.c on SPIKE Simulator
+
+### Overview
+This guide provides step-by-step instructions to compile and run the `sum_1ton.c` program using both the GCC compiler and the RISC-V compiler. The goal is to ensure that both compilers produce the same output on the terminal. Additionally, the guide includes details on running the compiled RISC-V program on the SPIKE simulator and debugging it.
+
+### Prerequisites
+Before proceeding, ensure you have the following installed on your system:
+
+- GCC Compiler
+- RISC-V Compiler (riscv64-unknown-elf-gcc)
+- SPIKE RISC-V ISA Simulator
+- Proxy Kernel (pk)
+
+### Compiling the Code
+
+#### Using GCC Compiler
+To compile `filename.c` using the GCC compiler, run the following command:
+
+```sh
+$ gcc -o filename filename.c
+```
+
+This will generate an executable file named `sum1ton` which can be executed directly on your system.
+
+```sh
+$ ./filename
+```
+ ![image](./Task2/gcc_comp.png)
+
+#### Using RISC-V Compiler
+To compile the program for RISC-V architecture, use the following command:
+
+```sh
+riscv64-unknown-elf-gcc -Ofast -mabi=lp64 -march=rv64i -o filename.o filename.c
+```
+ ![image](./Task2/riscv_comp.png)
+
+This will create an object file `sum1ton.o`, which can be executed on a RISC-V simulator like SPIKE.
+
+#### Viewing Optimized Assembly Code
+To inspect the assembly output more conveniently, you can **pipe** it through `less`:
+
+```sh
+riscv64-unknown-elf-objdump -d filename.o | less
+```
+ ![image](./Task2/assembly.png)
+ 
+### Running the Program on SPIKE Simulator
+To execute the compiled RISC-V program using the SPIKE simulator, use the following command:
+
+```sh
+$ spike pk filename.o
+```
+ ![image](./Task2/execute.png)
+
+This command runs the program on the SPIKE simulator using the Proxy Kernel (pk).
+
+### Debugging and Viewing Assembly in SPIKE
+For a detailed execution view, SPIKE provides debugging options. To enable debugging, run:
+
+```sh
+$ spike -d pk filename.o
+```
+ ![image](./Task2/debug.png)
+
+Once inside the debugging mode, you will see a sequence of RISC-V assembly instructions being executed. You can step through each instruction, inspect registers, and examine memory addresses interactively.
+
+
+### **Disassembly Breakdown**
+
+Each line of the assembly code represents a machine instruction, along with its memory address, opcode, and corresponding assembly mnemonic.
+
+#### **1. Function Setup (Prologue)**
+
+```assembly
+100b0:  00021537   lui     a0, 0x21        # Load upper immediate 0x21 into a0
+100b4:  ff010113   addi    sp, sp, -16     # Allocate 16 bytes on stack (adjust stack pointer)
+```
+
+- `lui a0, 0x21` → Loads the upper 20 bits of `a0` with `0x21`.
+- `addi sp, sp, -16` → Allocates 16 bytes on the stack to store local variables and the return address.
+
+#### **2. Argument Preparation for **``
+
+```assembly
+100b8:  00f00613   li      a2, 15          # Load immediate 15 into a2 (third argument)
+100bc:  00500593   li      a1, 5           # Load immediate 5 into a1 (second argument)
+100c0:  18050513   addi    a0, a0, 384     # Compute full address 0x21180 (first argument)
+```
+
+- `li a2, 15` → Loads `15` into `a2`, likely used as a parameter for `printf`.
+- `li a1, 5` → Loads `5` into `a1`, another argument for `printf`.
+- `addi a0, a0, 384` → Completes the address computation (`0x21180`), likely a format string for `printf`.
+
+#### **3. Save Return Address**
+
+```assembly
+100c4:  00113423   sd      ra, 8(sp)       # Save return address (ra) to stack
+```
+
+- Stores `ra` (return address) at `8(sp)`, so it can be restored later.
+
+#### **4. Function Call (**``**)**
+
+```assembly
+100c8:  340000ef   jal     ra, 10408 <printf>  # Call `printf`
+```
+
+- `jal ra, 10408` → Calls `printf`, storing the return address in `ra`.
+
+#### **5. Return Value Handling**
+
+```assembly
+100cc:  00813083   ld      ra, 8(sp)       # Restore return address from stack
+100d0:  00000513   li      a0, 0           # Load 0 into a0 (return 0)
+```
+
+- `ld ra, 8(sp)` → Restores the return address.
+- `li a0, 0` → Loads `0` into `a0`, indicating a successful return.
+
+#### **6. Stack Cleanup and Function Return**
+
+```assembly
+100d4:  01010113   addi    sp, sp, 16      # Restore stack pointer
+100d8:  00008067   ret                     # Return to caller
+```
+
+- `addi sp, sp, 16` → Deallocates the stack space.
+- `ret` → Returns to the calling function.
+
+
+
