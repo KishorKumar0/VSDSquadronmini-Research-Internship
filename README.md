@@ -439,3 +439,204 @@ Each line of the assembly code represents a machine instruction, along with its 
 
 
 
+### Part 2: CPU Emulator using C language
+
+This is a simple CPU emulator program written in C. It simulates a basic CPU architecture with four registers, a program counter, 256 bytes of memory, and basic arithmetic and jump instructions.
+
+#### Features
+
+- **Registers (A, B, C, D)**: Storage locations within the CPU, used to hold values for computations and instructions.
+- **Program Counter (PC)**: Keeps track of the current instruction address in memory.
+- **Memory**: 256 bytes of memory, where the program instructions are loaded and executed.
+- **Flags**:
+   - **Zero Flag (ZF)**: Set to 1 if the result of an arithmetic operation is zero.
+   - **Carry Flag (CF)**: Set to 1 if an arithmetic operation results in an overflow (exceeds 8 bits).
+
+
+#### Supported Instructions (Opcodes)
+
+1. **MOV**: Moves an immediate value into a register.
+   - **Opcode**: 0x01
+   - **Format**: MOV reg, imm (e.g., MOV A, 5)
+2. **ADD**: Adds the values of two registers, storing the result in the first register.
+   - **Opcode**: 0x02
+   - **Format**: ADD reg1, reg2 (e.g., ADD A, B)
+   - **Flags**: Sets the carry flag if the result exceeds 255 and the zero flag if the result is 0.
+3. **SUB**: Subtracts the value of one register from another, storing the result in the first register.
+   - **Opcode**: 0x03
+   - **Format**: SUB reg1, reg2 (e.g., SUB A, C)
+   - **Flags**: Sets the carry flag if the result is negative and the zero flag if the result is 0.
+3. **JMP**: Jumps to a specified memory address.
+   - **Opcode**: 0x04
+   - **Format**: JMP address
+4. **HLT**: Halts the CPU.
+   - **Opcode**: 0xFF
+#### code
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define CPU structure
+typedef struct CPU {
+    unsigned char registers[4];   // Registers: A, B, C, D
+    unsigned char pc;             // Program Counter
+    unsigned char memory[256];    // 256 bytes of memory
+    unsigned char zero_flag;      // Zero Flag
+    unsigned char carry_flag;     // Carry Flag
+} CPU;
+
+// Enum to identify registers easily
+enum { A, B, C, D };
+
+// Opcodes for each instruction
+enum {
+    MOV = 0x01,  // MOV reg, immediate (0x01 reg imm)
+    ADD = 0x02,  // ADD reg1, reg2 (0x02 reg1 reg2)
+    SUB = 0x03,  // SUB reg1, reg2 (0x03 reg1 reg2)
+    JMP = 0x04,  // JMP address (0x04 address)
+    HLT = 0xFF   // HLT (0xFF)
+};
+
+// Function to reset CPU
+void resetCPU(CPU *cpu) {
+    cpu->pc = 0;
+    cpu->zero_flag = 0;
+    cpu->carry_flag = 0;
+    for (int i = 0; i < 4; i++) cpu->registers[i] = 0;
+    for (int i = 0; i < 256; i++) cpu->memory[i] = 0;
+}
+
+// Function to load a program into memory
+void loadProgram(CPU *cpu, unsigned char *program, int size) {
+    for (int i = 0; i < size; i++) {
+        cpu->memory[i] = program[i];
+    }
+}
+
+// Function to print CPU state for debugging
+void printCPUState(CPU *cpu) {
+    printf("PC: %02X | A: %02X B: %02X C: %02X D: %02X | ZF: %d CF: %d\n",
+           cpu->pc, cpu->registers[A], cpu->registers[B], cpu->registers[C],
+           cpu->registers[D], cpu->zero_flag, cpu->carry_flag);
+}
+
+// Function to execute the instructions
+void execute(CPU *cpu) {
+    int running = 1;
+    while (running) {
+        unsigned char opcode = cpu->memory[cpu->pc++]; // Fetch instruction
+
+        switch (opcode) {
+            case MOV: {
+                // MOV reg, imm
+                unsigned char reg = cpu->memory[cpu->pc++];
+                unsigned char value = cpu->memory[cpu->pc++];
+                cpu->registers[reg] = value;
+                break;
+            }
+            case ADD: {
+                // ADD reg1, reg2
+                unsigned char reg1 = cpu->memory[cpu->pc++];
+                unsigned char reg2 = cpu->memory[cpu->pc++];
+                unsigned short result = cpu->registers[reg1] + cpu->registers[reg2];
+                
+                cpu->carry_flag = (result > 0xFF);  // Set carry flag if overflow
+                cpu->registers[reg1] = result & 0xFF; // Store result in reg1
+                cpu->zero_flag = (cpu->registers[reg1] == 0); // Set zero flag if result is 0
+                break;
+            }
+            case SUB: {
+                // SUB reg1, reg2
+                unsigned char reg1 = cpu->memory[cpu->pc++];
+                unsigned char reg2 = cpu->memory[cpu->pc++];
+                unsigned short result = cpu->registers[reg1] - cpu->registers[reg2];
+                
+                cpu->carry_flag = (cpu->registers[reg1] < cpu->registers[reg2]);
+                cpu->registers[reg1] = result & 0xFF; // Store result in reg1
+                cpu->zero_flag = (cpu->registers[reg1] == 0); // Set zero flag if result is 0
+                break;
+            }
+            case JMP: {
+                // JMP address
+                unsigned char address = cpu->memory[cpu->pc++];
+                cpu->pc = address;
+                break;
+            }
+            case HLT: {
+                // HLT
+                running = 0;
+                break;
+            }
+            default:
+                printf("Unknown opcode: %02X\n", opcode);
+                running = 0;
+                break;
+        }
+
+        // Print CPU state after each instruction
+        printCPUState(cpu);
+    }
+}
+
+int main() {
+    CPU cpu;
+    unsigned char in1, in2;
+    char continue_flag;
+
+    do {
+        // Reset CPU for each run
+        resetCPU(&cpu);
+
+        // Take inputs for registers A and B
+        printf("Enter value for in1 (to be moved to register A): ");
+        scanf("%hhu", &in1);
+        printf("Enter value for in2 (to be moved to register B): ");
+        scanf("%hhu", &in2);
+
+        // Sample program with all instructions
+        unsigned char program[] = {
+            MOV, A, in1,         // MOV A, in1
+            MOV, B, in2,         // MOV B, in2
+            ADD, A, B,           // ADD A, B (A = in1 + in2)
+            MOV, C, 5,           // MOV C, 5
+            SUB, D, C,           // SUB A, C (A = (in1 + in2) - 5)
+            JMP, 0x01,           // JMP to address 0 (loop to the beginning)
+            HLT                  // HLT (never reached due to JMP loop)
+        };
+
+        // Load and execute program
+        loadProgram(&cpu, program, sizeof(program));
+        execute(&cpu);
+
+        // Ask if user wants to run again
+        printf("Do you want to enter new values and run the program again? (y/n): ");
+        scanf(" %c", &continue_flag);  // The space before %c handles trailing newline from previous input
+    } while (continue_flag == 'y' || continue_flag == 'Y');
+
+    return 0;
+}
+```
+#### Emulator Operation
+
+1. **Program Loading**: The program is loaded into the CPU’s memory from address 0.
+2. **Execution Cycle**:
+   - The program counter (PC) points to the current instruction address in memory.
+   - The emulator fetches the instruction, increments the PC, and then executes the instruction      according to its opcode.
+3. **Instruction Execution**:
+   - **MOV** loads a specific register with an immediate value.
+   - **ADD** and **SUB** perform arithmetic on the values of registers, updating the zero and         carry flags    as needed.
+   - **JMP** modifies the program counter to execute instructions at a different address.
+   - **HLT** stops execution, ending the program.
+4. **State Printing**: After each instruction, the emulator prints the CPU’s current state, including register values, the program counter, and flag status.
+5. **Interactive Mode**: The program prompts users to input values for registers A and B at runtime, allowing repeated executions with different inputs.
+
+#### Sample Program Execution
+For example, a program may:
+- Move a user-defined value into register A, another into register B.
+- Add registers A and B, storing the result in A.
+- Move a constant into register C.
+- Subtract the value of C from A.
+- Jump back to the start, creating an infinite loop.
+  
+![image](./Task1/cpu_output.png)
+
