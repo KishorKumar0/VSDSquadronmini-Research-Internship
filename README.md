@@ -640,3 +640,169 @@ For example, a program may:
   
 ![image](./Task1/cpu_output.png)
 
+
+---
+
+### **Part 1: RISC-V Instruction Formats**
+
+#### **Introduction**
+RISC-V is a widely used open-source instruction set architecture (ISA) that follows a simple and modular design. It categorizes instructions into different types based on their function and operand requirements. The six primary instruction formats in RISC-V are:
+
+1. **R-Type (Register-Register)**
+2. **I-Type (Immediate-Value)**
+3. **S-Type (Store)**
+4. **B-Type (Branch)**
+5. **U-Type (Upper Immediate)**
+6. **J-Type (Jump)**
+
+Each instruction type has a specific bit pattern and field allocation, which we will explore in detail.
+
+---
+
+#### **1. R-Type Instructions (Register-to-Register Operations)**
+
+**Purpose**
+
+R-type instructions perform arithmetic and logical operations between registers. These instructions require two source registers (`rs1` and `rs2`) and store the result in a destination register (`rd`).
+
+**Bit Pattern**
+```
+| funct7  | rs2  | rs1  | funct3  | rd   | opcode  |
+|---------|------|------|---------|------|---------|
+| 7 bits  | 5 bits | 5 bits | 3 bits  | 5 bits | 7 bits  |
+```
+
+**Field Descriptions**
+- **opcode (7 bits)** – Identifies the instruction category (e.g., `0110011` for R-type).
+- **rd (5 bits)** – Destination register where the result is stored.
+- **funct3 (3 bits)** – Specifies the operation (e.g., `000` for ADD, `111` for AND).
+- **rs1 (5 bits)** – First source register.
+- **rs2 (5 bits)** – Second source register.
+- **funct7 (7 bits)** – Further defines the operation (e.g., `0000000` for ADD, `0100000` for SUB).
+
+**Examples**
+- `ADD x1, x2, x3` (Adds `x2` and `x3`, stores result in `x1`)
+- `SUB x1, x2, x3` (Subtracts `x3` from `x2`, stores result in `x1`)
+
+---
+
+#### **2. I-Type Instructions (Immediate Operations and Loads)**
+
+**Purpose**
+
+I-type instructions use an immediate value (constant) instead of a second register. These are used for:
+- Arithmetic operations with a constant value
+- Load instructions (reading from memory)
+- Branch conditions
+
+**Bit Pattern**
+```
+| imm[11:0]  | rs1  | funct3  | rd   | opcode  |
+|------------|------|---------|------|---------|
+| 12 bits    | 5 bits | 3 bits  | 5 bits | 7 bits  |
+```
+
+**Field Descriptions**
+- **opcode (7 bits)** – Identifies instruction type (e.g., `0010011` for arithmetic).
+- **rd (5 bits)** – Destination register.
+- **funct3 (3 bits)** – Specifies the operation.
+- **rs1 (5 bits)** – Source register.
+- **imm (12 bits)** – Signed immediate value.
+
+**Examples**
+- `ADDI x1, x2, 10` (Adds `x2` and `10`, stores result in `x1`)
+- `LW x1, 0(x2)` (Loads a word from memory address in `x2`, stores in `x1`)
+
+---
+
+#### **3. S-Type Instructions (Store Operations)**
+
+**Purpose**
+
+S-type instructions store register values into memory.
+
+**Bit Pattern**
+```
+| imm[11:5]  | rs2  | rs1  | funct3  | imm[4:0]  | opcode  |
+|------------|------|------|---------|-----------|---------|
+| 7 bits    | 5 bits | 5 bits | 3 bits  | 5 bits   | 7 bits  |
+```
+
+**Field Descriptions**
+- **opcode (7 bits)** – Identifies store instructions (e.g., `0100011`).
+- **imm[11:5], imm[4:0] (12 bits total)** – Immediate offset for memory address.
+- **rs1 (5 bits)** – Base address register.
+- **rs2 (5 bits)** – Register whose value will be stored.
+- **funct3 (3 bits)** – Defines storage type (e.g., `010` for word storage).
+
+**Example**
+- `SW x1, 8(x2)` (Stores `x1` into memory at `x2 + 8`)
+
+---
+
+#### **4. B-Type Instructions (Branch Operations)**
+
+**Purpose**
+B-type instructions enable conditional branching based on register values.
+
+**Bit Pattern**
+```
+| imm[12|10:5] | rs2  | rs1  | funct3  | imm[4:1|11]  | opcode  |
+|-------------|------|------|---------|------------|---------|
+| 7 bits     | 5 bits | 5 bits | 3 bits  | 5 bits     | 7 bits  |
+```
+
+**Field Descriptions**
+- **opcode (7 bits)** – Identifies branch instructions (`1100011`).
+- **imm (12 bits, split across instruction)** – Immediate offset for jump.
+- **rs1, rs2 (5 bits each)** – Registers for comparison.
+- **funct3 (3 bits)** – Defines branch type (e.g., `000` for BEQ).
+
+**Example**
+- `BEQ x1, x2, 16` (If `x1 == x2`, branch 16 bytes forward)
+
+---
+
+#### **5. U-Type Instructions (Upper Immediate Operations)**
+
+**Purpose**
+U-type instructions operate on large immediate values, mainly for:
+- Loading immediate values (`LUI`)
+- Adjusting addresses (`AUIPC`)
+
+**Bit Pattern**
+```
+| imm[31:12]  | rd   | opcode  |
+|-------------|------|---------|
+| 20 bits    | 5 bits | 7 bits  |
+```
+
+**Field Descriptions**
+- **opcode (7 bits)** – Identifies U-type instruction (`0110111` for LUI).
+- **rd (5 bits)** – Destination register.
+- **imm (20 bits)** – Immediate value, shifted left by 12 bits.
+
+**Example**
+- `LUI x1, 0x12345` (Loads `0x12345000` into `x1`)
+
+---
+
+#### **6. J-Type Instructions (Jump Instructions)**
+
+**Purpose**
+J-type instructions provide unconditional jumps.
+
+**Bit Pattern**
+```
+| imm[20|10:1|11|19:12] | rd   | opcode  |
+|-----------------------|------|---------|
+| 20 bits              | 5 bits | 7 bits  |
+```
+
+**Field Descriptions**
+- **opcode (7 bits)** – Identifies jump instructions (`1101111` for JAL).
+- **rd (5 bits)** – Stores return address.
+- **imm (20 bits, scattered)** – Immediate offset.
+
+**Example**
+- `JAL x1, 1000` (Jumps 1000 bytes forward, saves return address in `x1`)
