@@ -646,7 +646,7 @@ For example, a program may:
 ## RISC-V Instruction Types Overview
 ### **Part 1: RISC-V Instruction Formats**
 
-#### **Introduction**
+**Introduction**
 RISC-V is a widely used open-source instruction set architecture (ISA) that follows a simple and modular design. It categorizes instructions into different types based on their function and operand requirements. The six primary instruction formats in RISC-V are:
 
 1. **R-Type (Register-Register)**
