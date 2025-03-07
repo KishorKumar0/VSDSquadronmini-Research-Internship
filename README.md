@@ -643,6 +643,7 @@ For example, a program may:
 
 ---
 
+## RISC-V Instruction Types Overview
 ### **Part 1: RISC-V Instruction Formats**
 
 #### **Introduction**
